@@ -35,7 +35,7 @@ class ReCaptcha
      * Version of this client library.
      * @const string
      */
-    const VERSION = 'php_1.2';
+    const VERSION = 'php_1.2.1';
 
     /**
      * URL for reCAPTCHA sitevrerify API
@@ -53,7 +53,7 @@ class ReCaptcha
      * Could not connect to service
      * @const string
      */
-    const E_BAD_CONNECTION = 'bad-connection';
+    const E_CONNECTION_FAILED = 'connection-failed';
 
     /**
      * Did not receive a 200 from the service
