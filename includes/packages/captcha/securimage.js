@@ -73,18 +73,11 @@ SecurimageAudio.prototype.init = function() {
                 
                 if (this.flashFallback) {
                     // ie9+? bug - flash object does not display when moved from within audio tag to other dom node
-                    var newObjAu = document.createElement('object');
-                    var newParams = document.createElement('param');
-                    var oldParams = objAu.getElementsByTagName('param');
-                    this.copyElementAttributes(newObjAu, objAu);
-                    if (oldParams.length > 0) {
-                        this.copyElementAttributes(newParams, oldParams[0]);
-                        newObjAu.appendChild(newParams);
-                    }
+                    var newObjAu = this.copyElement(objAu);
                     objAu.parentNode.removeChild(objAu);
                     this.audioElement.parentNode.appendChild(newObjAu);
                 }
-
+                
                 this.audioElement.parentNode.removeChild(this.audioElement);
                 this.controlsElement.parentNode.removeChild(this.controlsElement);
                 
@@ -193,16 +186,13 @@ SecurimageAudio.prototype.replaceElements = function() {
     parent.removeChild(this.audioElement);
     
     var newAudioEl = document.createElement('audio');
-    newAudioEl.setAttribute('style', 'display: none;');
-    newAudioEl.setAttribute('preload', 'false');
-    newAudioEl.setAttribute('id', this.audioElement.id);
 
     for (var c = 0; c < this.audioElement.children.length; ++c) {
         if (this.audioElement.children[c].tagName.toLowerCase() != 'source') continue;
         var sourceEl = document.createElement('source');
         this.copyElementAttributes(sourceEl, this.audioElement.children[c]);
         var cid = (null !== this.captchaId) ? this.captchaId : (Math.random() + '').replace('0.', '');
-        sourceEl.src = sourceEl.src.replace(/([?|&])id=[a-zA-Z0-9]+/, '$1id=' + cid);
+        sourceEl.src = sourceEl.src.replace(/id=[a-zA-Z0-9]+/, 'id=' + cid);
         newAudioEl.appendChild(sourceEl);
     }
 
@@ -229,24 +219,5 @@ SecurimageAudio.prototype.audioStopped = function() {
 }
 
 SecurimageAudio.prototype.audioError = function(err) {
-    var msg = null;
-    switch(err.target.error.code) {
-        case err.target.error.MEDIA_ERR_ABORTED:
-            break;
-        case err.target.error.MEDIA_ERR_NETWORK:
-            msg = 'A network error caused the audio download to fail.';
-            break;
-        case err.target.error.MEDIA_ERR_DECODE:
-            alert('An error occurred while decoding the audio');
-            break;
-        case err.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-            alert('The audio format is not supported by your browser.');
-            break;
-        default:
-            alert('An unknown error occurred trying to play the audio.');
-            break;
-    }
-    if (msg) {
-        alert('Audio playback error: ' + msg);
-    }
+    alert('Audio playback error: ' + err.message);
 }
